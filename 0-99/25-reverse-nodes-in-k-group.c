@@ -1,4 +1,4 @@
-/* https://leetcode.cn/problems/reverse-linked-list-ii/ */
+/* https://leetcode.cn/problems/reverse-nodes-in-k-group/ */
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -11,16 +11,17 @@ struct ListNode
 
 struct ListNode* initnode(int num);
 void appendnode(struct ListNode *newnode, struct ListNode **head);
-struct ListNode* reverseBetween(struct ListNode* head, int left, int right);
+struct ListNode* reverseKGroup(struct ListNode* head, int k);
 
 int main(void){
     struct ListNode *head = NULL;
     int data[5] = {1, 2, 3, 4, 5};
+    int k = 2;
     for (int i = 0; i < 5; i++)
     {
         appendnode(initnode(data[i]), &head);
     }
-    for (struct ListNode *i = reverseBetween(head, 2, 4); i != NULL; i = i->next)
+    for (struct ListNode *i = reverseKGroup(head, k); i != NULL; i = i->next)
     {
         printf("%d ", i->val);
     }
@@ -46,26 +47,35 @@ void appendnode(struct ListNode *newnode, struct ListNode **head){
     }
 }
 
-struct ListNode* reverseBetween(struct ListNode* head, int left, int right){
+struct ListNode* reverseKGroup(struct ListNode* head, int k){
     struct ListNode *dummy = malloc(sizeof(struct ListNode));
-    dummy->val = -1;
     dummy->next = head;
+    dummy->val = -1;
+    int len = 0;
+    for (struct ListNode *i = head; i != NULL; i = i->next)
+    {
+        len++;
+    }
     struct ListNode *p0 = dummy;
-    for (int i = 0; i < left - 1; i++)
+    struct ListNode *pre;
+    struct ListNode *cur;
+    struct ListNode *nxt;
+    while (len >= k)
     {
-        p0 = p0->next;
+        len -= k;
+        pre = NULL;
+        cur = p0->next;
+        for (int i = 0; i < k; i++)
+        {
+            nxt = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = nxt;
+        }
+        nxt = p0->next;
+        p0->next->next = cur;
+        p0->next = pre;
+        p0 = nxt;
     }
-    struct ListNode *pre = NULL;
-    struct ListNode *cur = p0->next;
-    struct ListNode *nxt = NULL;
-    for (int i = 0; i < right - left + 1; i++)
-    {
-        nxt = cur->next;
-        cur->next = pre;
-        pre = cur;
-        cur = nxt;
-    }
-    p0->next->next = cur;
-    p0->next = pre;
     return dummy->next;
 }
