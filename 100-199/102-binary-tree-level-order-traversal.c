@@ -67,16 +67,17 @@ int** levelOrder(struct TreeNode* root, int* returnSize, int** returnColumnSizes
     {
         return NULL;
     }
-    int columnSizes[2000];
-    struct TreeNode *queue[2000];
-    int rear = 0;
+    struct TreeNode* queue[2000];
+    int ColumnSizes[2000];
     int head = 0;
+    int rear = 0;
+    int start;
     queue[rear++] = root;
-    while (rear != head)
+    while (head != rear)
     {
-        ans[*returnSize] = malloc(sizeof(int) * (rear - head));
-        columnSizes[*returnSize] = rear - head;
-        int start = head;
+        ans[*returnSize] = malloc((rear - head) * sizeof(int));
+        ColumnSizes[*returnSize] = rear - head;
+        start = head;
         head = rear;
         for (int i = start; i < head; i++)
         {
@@ -95,7 +96,7 @@ int** levelOrder(struct TreeNode* root, int* returnSize, int** returnColumnSizes
     *returnColumnSizes = malloc((*returnSize) * sizeof(int));
     for (int i = 0; i < *returnSize; i++)
     {
-        (*returnColumnSizes)[i] = columnSizes[i];
+        (*returnColumnSizes)[i] = ColumnSizes[i];
     }
     return ans;
 }
