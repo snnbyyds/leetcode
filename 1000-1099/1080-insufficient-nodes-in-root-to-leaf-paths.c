@@ -1,10 +1,7 @@
-/* https://leetcode.cn/problems/longest-zigzag-path-in-a-binary-tree/ */
+/* https://leetcode.cn/problems/insufficient-nodes-in-root-to-leaf-paths/ */
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<stdbool.h>
-
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 struct TreeNode {
     int val;
@@ -14,15 +11,16 @@ struct TreeNode {
 
 void create(int *nums, int numsSize, int empty, struct TreeNode **root);
 struct TreeNode *initnode(int value);
-int longestZigZag(struct TreeNode* root);
-void dfs(struct TreeNode* node, bool dir, int len, int *ans);
+void levelOrder(struct TreeNode *root);
+struct TreeNode* sufficientSubset(struct TreeNode* root, int limit);
 
 int main(void){
+    int data[15] = {1, 2, 3, 4, -99, -99, 7, 8, 9, -99, -99, 12, 13, -99, 14};
+    int empty = -100001;
     struct TreeNode *root = NULL;
-    int empty = -1;
-    int data[17] = {1, -1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1};
-    create(data, 17, empty, &root);
-    printf("%d\n", longestZigZag(root));
+    create(data, 15, empty, &root);
+    int limit = 1;
+    levelOrder(sufficientSubset(root, limit));
     return 0;
 }
 
@@ -70,39 +68,50 @@ struct TreeNode *initnode(int value){
     return newnode;
 }
 
-int longestZigZag(struct TreeNode* root){
+void levelOrder(struct TreeNode *root){
     if (root == NULL)
     {
-        return 0;
+        return;
     }
-    int ans = 0;
-    dfs(root, true, 0, &ans);
-    dfs(root, false, 0, &ans);
-    return ans;
+    struct TreeNode *queue[2000];
+    int head = 0;
+    int rear = 0;
+    int start;
+    queue[rear++] = root;
+    while (head != rear)
+    {
+        start = head;
+        head = rear;
+        for (int i = start; i < head; i++)
+        {
+            if (queue[i]->left != NULL)
+            {
+                queue[rear++] = queue[i]->left;
+            }
+            if (queue[i]->right != NULL)
+            {
+                queue[rear++] = queue[i]->right;
+            }
+        }
+    }
+    for (int i = 0; i < rear; i++)
+    {
+        printf("%d ", queue[i]->val);
+    }
+    printf("\n");
 }
 
-void dfs(struct TreeNode* node, bool dir, int len, int *ans){
-    *ans = MAX(*ans, len);
-    if (dir)
+struct TreeNode* sufficientSubset(struct TreeNode* root, int limit){
+    if (root == NULL)
     {
-        if (node->left != NULL)
-        {
-            dfs(node->left, true, 1, ans);
-        }
-        if (node->right != NULL)
-        {
-            dfs(node->right, false, len + 1, ans);
-        }
+        return NULL;
     }
-    else
+    limit -= root->val;
+    if (root->left == NULL && root->right == NULL)
     {
-        if (node->left != NULL)
-        {
-            dfs(node->left, true, len + 1, ans);
-        }
-        if (node->right != NULL)
-        {
-            dfs(node->right, false, 1, ans);
-        }
+        return limit <= 0 ? root : NULL;
     }
+    root->left = sufficientSubset(root->left, limit);
+    root->right = sufficientSubset(root->right, limit);
+    return (root->left != NULL || root->right != NULL) ? root : NULL;
 }

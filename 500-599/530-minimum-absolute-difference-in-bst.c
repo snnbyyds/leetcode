@@ -1,10 +1,10 @@
-/* https://leetcode.cn/problems/longest-zigzag-path-in-a-binary-tree/ */
+/* https://leetcode.cn/problems/minimum-absolute-difference-in-bst/ */
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<stdbool.h>
+#include<limits.h>
 
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 struct TreeNode {
     int val;
@@ -14,15 +14,15 @@ struct TreeNode {
 
 void create(int *nums, int numsSize, int empty, struct TreeNode **root);
 struct TreeNode *initnode(int value);
-int longestZigZag(struct TreeNode* root);
-void dfs(struct TreeNode* node, bool dir, int len, int *ans);
+int getMinimumDifference(struct TreeNode* root);
+void dfs(struct TreeNode* root, int *min, int *pre);
 
 int main(void){
-    struct TreeNode *root = NULL;
+    int data[5] = {4, 2, 6, 1, 3};
     int empty = -1;
-    int data[17] = {1, -1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1};
-    create(data, 17, empty, &root);
-    printf("%d\n", longestZigZag(root));
+    struct TreeNode *root = NULL;
+    create(data, 5, empty, &root);
+    printf("%d\n", getMinimumDifference(root));
     return 0;
 }
 
@@ -70,39 +70,27 @@ struct TreeNode *initnode(int value){
     return newnode;
 }
 
-int longestZigZag(struct TreeNode* root){
-    if (root == NULL)
-    {
-        return 0;
-    }
-    int ans = 0;
-    dfs(root, true, 0, &ans);
-    dfs(root, false, 0, &ans);
-    return ans;
+int getMinimumDifference(struct TreeNode* root){
+    int min = INT_MAX;
+    int pre = -1;
+    dfs(root, &min, &pre);
+    return min;
 }
 
-void dfs(struct TreeNode* node, bool dir, int len, int *ans){
-    *ans = MAX(*ans, len);
-    if (dir)
+void dfs(struct TreeNode* root, int *min, int *pre){
+    if (root == NULL)
     {
-        if (node->left != NULL)
-        {
-            dfs(node->left, true, 1, ans);
-        }
-        if (node->right != NULL)
-        {
-            dfs(node->right, false, len + 1, ans);
-        }
+        return;
+    }
+    dfs(root->left, min, pre);
+    if (*pre == -1)
+    {
+        *pre = root->val;
     }
     else
     {
-        if (node->left != NULL)
-        {
-            dfs(node->left, true, len + 1, ans);
-        }
-        if (node->right != NULL)
-        {
-            dfs(node->right, false, 1, ans);
-        }
+        *min = MIN(*min, root->val - (*pre));
+        *pre = root->val;
     }
+    dfs(root->right, min, pre);
 }

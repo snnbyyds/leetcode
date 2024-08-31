@@ -1,10 +1,9 @@
-/* https://leetcode.cn/problems/longest-zigzag-path-in-a-binary-tree/ */
+/* https://leetcode.cn/problems/validate-binary-search-tree/ */
 
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
-
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#include<limits.h>
 
 struct TreeNode {
     int val;
@@ -14,15 +13,15 @@ struct TreeNode {
 
 void create(int *nums, int numsSize, int empty, struct TreeNode **root);
 struct TreeNode *initnode(int value);
-int longestZigZag(struct TreeNode* root);
-void dfs(struct TreeNode* node, bool dir, int len, int *ans);
+bool isValidBST(struct TreeNode* root);
+bool f(struct TreeNode *node, long long left, long long right);
 
 int main(void){
     struct TreeNode *root = NULL;
     int empty = -1;
-    int data[17] = {1, -1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1};
-    create(data, 17, empty, &root);
-    printf("%d\n", longestZigZag(root));
+    int data[7] = {5, 1, 4, -1, -1, 3, 6};
+    create(data, 7, empty, &root);
+    printf("%d\n", isValidBST(root) ? 1 : 0);
     return 0;
 }
 
@@ -70,39 +69,16 @@ struct TreeNode *initnode(int value){
     return newnode;
 }
 
-int longestZigZag(struct TreeNode* root){
-    if (root == NULL)
-    {
-        return 0;
-    }
-    int ans = 0;
-    dfs(root, true, 0, &ans);
-    dfs(root, false, 0, &ans);
-    return ans;
+bool isValidBST(struct TreeNode* root){
+    long long left = LLONG_MIN;
+    long long right = LLONG_MAX;
+    return f(root, left, right);
 }
 
-void dfs(struct TreeNode* node, bool dir, int len, int *ans){
-    *ans = MAX(*ans, len);
-    if (dir)
+bool f(struct TreeNode *node, long long left, long long right){
+    if (node == NULL)
     {
-        if (node->left != NULL)
-        {
-            dfs(node->left, true, 1, ans);
-        }
-        if (node->right != NULL)
-        {
-            dfs(node->right, false, len + 1, ans);
-        }
+        return true;
     }
-    else
-    {
-        if (node->left != NULL)
-        {
-            dfs(node->left, true, len + 1, ans);
-        }
-        if (node->right != NULL)
-        {
-            dfs(node->right, false, 1, ans);
-        }
-    }
+    return node->val > left && node->val < right && f(node->left, left, node->val) && f(node->right, node->val, right);
 }
