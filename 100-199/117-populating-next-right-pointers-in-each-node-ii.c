@@ -1,4 +1,4 @@
-/* https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/ */
+/* https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/ */
 
 #include<stdio.h>
 #include<stdlib.h>
