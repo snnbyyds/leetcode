@@ -6,7 +6,7 @@
 #include<math.h>
 
 int** subsets(int* nums, int numsSize, int* returnSize, int** returnColumnSizes);
-void backtrack(int *nums, int numSize, int **ans, int *returnSize, int **returnColumnSizes, int *path, int pathSize, int startidx);
+void backtrack(int **ans, int *nums, int numsSize, int* returnSize, int **returnColumnSizes, int *path, int pathSize, int idx);
 
 int main(void){
     int nums[3] = {1, 2, 3};
@@ -25,22 +25,22 @@ int main(void){
 }
 
 int** subsets(int* nums, int numsSize, int* returnSize, int** returnColumnSizes){
-    int ansSize = (int)pow(2, numsSize);
+    int ansSize = pow(2, numsSize);
     int **ans = malloc(sizeof(int*) * ansSize);
     int *path = malloc(sizeof(int) * numsSize);
     *returnSize = 0;
     *returnColumnSizes = malloc(sizeof(int) * ansSize);
-    backtrack(nums, numsSize, ans, returnSize, returnColumnSizes, path, 0, 0);
+    backtrack(ans, nums, numsSize, returnSize, returnColumnSizes, path, 0, 0);
     return ans;
 }
 
-void backtrack(int *nums, int numSize, int **ans, int *returnSize, int **returnColumnSizes, int *path, int pathSize, int startidx){
+void backtrack(int **ans, int *nums, int numsSize, int* returnSize, int **returnColumnSizes, int *path, int pathSize, int idx){
     ans[*returnSize] = malloc(sizeof(int) * pathSize);
     memcpy(ans[*returnSize], path, sizeof(int) * pathSize);
     (*returnColumnSizes)[(*returnSize)++] = pathSize;
-    for (int i = startidx; i < numSize; i++)
+    for (int i = idx; i < numsSize; i++)
     {
         path[pathSize] = nums[i];
-        backtrack(nums, numSize, ans, returnSize, returnColumnSizes, path, pathSize + 1, i + 1);
+        backtrack(ans, nums, numsSize, returnSize, returnColumnSizes, path, pathSize + 1, i + 1);
     }
 }
