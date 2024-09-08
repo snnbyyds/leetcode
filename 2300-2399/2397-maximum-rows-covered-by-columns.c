@@ -42,7 +42,7 @@ void backtrack(int *ans, int** matrix, int matrixSize, int* matrixColSize, int n
         *ans = MAX(*ans, is_covered);
         return;
     }
-    for (int i = startidx; i < matrixColSize[0]; i++)
+    for (int i = startidx; i < matrixColSize[0] - (numSelect - top) + 1; i++)
     {
         path[top++] = i;
         backtrack(ans, matrix, matrixSize, matrixColSize, numSelect, path, top, i + 1);
