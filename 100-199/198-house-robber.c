@@ -15,12 +15,25 @@ int main(void){
 }
 
 int rob(int* nums, int numsSize){
+    int f0 = 0;
+    int f1 = 0;
+    int new_f;
+    for (int i = 0; i < numsSize; i++)
+    {
+        new_f = f0 + nums[i] > f1 ? f0 + nums[i] : f1;
+        f0 = f1;
+        f1 = new_f; 
+    }
+    return f1;
+    /*
     int *f = calloc(numsSize + 2, sizeof(int));
     for (int i = 0; i < numsSize; i++)
     {
         f[i + 2] = f[i] + nums[i] > f[i + 1] ? f[i] + nums[i] : f[i + 1];
     }
     return f[numsSize + 1];
+    */
+
     /*
     int *cache = malloc(sizeof(int) * numsSize);
     for (int i = 0; i < numsSize; i++)
