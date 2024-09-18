@@ -1,4 +1,4 @@
-/* https://leetcode.cn/problems/binary-tree-preorder-traversal/ */
+/* https://leetcode.cn/problems/binary-tree-postorder-traversal/ */
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -11,8 +11,8 @@ struct TreeNode {
 
 void create(int *nums, int numsSize, int empty, struct TreeNode **root);
 struct TreeNode *initnode(int value);
-int* preorderTraversal(struct TreeNode* root, int* returnSize);
-void dfs(struct TreeNode *root, int *returnSize, int *ans);
+int* postorderTraversal(struct TreeNode* root, int* returnSize);
+void dfs(int *ans, struct TreeNode* root, int* returnSize);
 
 int main(void){
     struct TreeNode *root = NULL;
@@ -20,7 +20,7 @@ int main(void){
     int data[] = {1, 2, 3, 4, 5, -101, 8, -101, -101, 6, 7, 9};
     create(data, sizeof(data) / sizeof(int), empty, &root);
     int returnSize;
-    int *ans = preorderTraversal(root, &returnSize);
+    int *ans = postorderTraversal(root, &returnSize);
     for (int i = 0; i < returnSize; i++)
     {
         printf("%d\t", ans[i]);
@@ -66,19 +66,19 @@ struct TreeNode *initnode(int value){
     return newnode;
 }
 
-int* preorderTraversal(struct TreeNode* root, int* returnSize){
+int* postorderTraversal(struct TreeNode* root, int* returnSize){
     *returnSize = 0;
     int *ans = malloc(sizeof(int) * 101);
-    dfs(root, returnSize, ans);
+    dfs(ans, root, returnSize);
     return ans;
 }
 
-void dfs(struct TreeNode *root, int *returnSize, int *ans){
+void dfs(int *ans, struct TreeNode* root, int* returnSize){
     if (root == NULL)
     {
         return;
     }
+    dfs(ans, root->left, returnSize);
+    dfs(ans, root->right, returnSize);
     ans[(*returnSize)++] = root->val;
-    dfs(root->left, returnSize, ans);
-    dfs(root->right, returnSize, ans);
 }

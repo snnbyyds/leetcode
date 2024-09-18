@@ -1,7 +1,9 @@
-/* https://leetcode.cn/problems/binary-tree-preorder-traversal/ */
+/* https://leetcode.cn/problems/diameter-of-binary-tree/ */
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+#include<limits.h>
 
 struct TreeNode {
     int val;
@@ -11,21 +13,15 @@ struct TreeNode {
 
 void create(int *nums, int numsSize, int empty, struct TreeNode **root);
 struct TreeNode *initnode(int value);
-int* preorderTraversal(struct TreeNode* root, int* returnSize);
-void dfs(struct TreeNode *root, int *returnSize, int *ans);
+int diameterOfBinaryTree(struct TreeNode* root);
+int dfs(struct TreeNode *root, int *ans);
 
 int main(void){
     struct TreeNode *root = NULL;
     int empty = -101;
     int data[] = {1, 2, 3, 4, 5, -101, 8, -101, -101, 6, 7, 9};
     create(data, sizeof(data) / sizeof(int), empty, &root);
-    int returnSize;
-    int *ans = preorderTraversal(root, &returnSize);
-    for (int i = 0; i < returnSize; i++)
-    {
-        printf("%d\t", ans[i]);
-    }
-    printf("\n");
+    printf("%d\n", diameterOfBinaryTree(root));
     return 0;
 }
 
@@ -66,19 +62,23 @@ struct TreeNode *initnode(int value){
     return newnode;
 }
 
-int* preorderTraversal(struct TreeNode* root, int* returnSize){
-    *returnSize = 0;
-    int *ans = malloc(sizeof(int) * 101);
-    dfs(root, returnSize, ans);
+int diameterOfBinaryTree(struct TreeNode* root){
+    int ans = INT_MIN;
+    dfs(root, &ans);
     return ans;
 }
 
-void dfs(struct TreeNode *root, int *returnSize, int *ans){
+int dfs(struct TreeNode *root, int *ans){
     if (root == NULL)
     {
-        return;
+        return 0;
     }
-    ans[(*returnSize)++] = root->val;
-    dfs(root->left, returnSize, ans);
-    dfs(root->right, returnSize, ans);
+    int l_depth = dfs(root->left, ans);
+    int r_depth = dfs(root->right, ans);
+    int ret = (l_depth > r_depth ? l_depth : r_depth) + 1;
+    if (*ans < l_depth + r_depth)
+    {
+        *ans = l_depth + r_depth;
+    }
+    return ret;
 }
